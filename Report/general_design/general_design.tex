@@ -6,36 +6,101 @@
 \begin{figure}[!h]
     \centering
     \includegraphics{design_diagram.png}
-    \caption{Design overview}
+    \caption{System design overview}
     \label{fig:design_overview}
 \end{figure}
 
+This chapter describes the general requirements and design of the system. This includes the design and interactions of sub-systems as well as the selection of major components. Detailed design decisions and processes are described in chapter \ref{chap:detail_design}.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Requirements}
+The project is intended for indoor use and must therefore be designed to be as small and compact as possible. \\
+
+To function during power outages, the system will need to include a battery that can be recharged from a standard power outlet. \\
+
+The system must be able to reliably and accurately monitor soil moisture levels and exposure to sunlight. This data must be accessible to the user and presented in a way that is easy to understand. \\
+
+The system must be able to reliably maintain soil moisture levels by providing water automatically. The user must be able to adjust the desired soil moisture level.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{System design and component selection}
+
 Data from a soil moisture and UV light sensor will be monitored using a microcontroller. When soil moisture levels fall below a set value, a pump will turn on to water the plant until the soil reaches the target moisture level. The soil moisture, UV light exposure and watering times will be logged by the microcontroller and sent to an app. The user can use the app to view the data and set the moisture level target. The system will be powered by a battery that charges when power is available.
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Microcontroller}
-The ESP32-C3-DevKitC-02 will be used for this project as it is WiFi and Bluetooth capable.
+
+\begin{table}[!h]
+    \centering
+    \begin{tabular}{|c|c|c|c|}
+        \hline
+        Component & Selected & Cost & Product page \\
+        \hline
+        Microcontroller &  ESP32 C6 Dev Board & R 285.20 & \href{https://www.robotics.org.za/ESP32-C6-DEV}{link} \\
+        UV light sensor & Wave UV Sensor Module - GUVA-S12D & R 112.70 & \href{https://www.robotics.org.za/W9537}{link} \\
+        Soil moisture sensor & Capacitive Soil Moisture Sensor V1.2 & R 55.20 & \href{https://www.robotics.org.za/CAP-SW-12}{link} \\
+        Pump & 6V Peristaltic Pump & R 229.95 & \href{https://www.diyelectronics.co.za/store/motors/4627-6v-peristaltic-pump-100mlmin.html}{link} \\
+        Battery & & R & \\
+        \hline
+    \end{tabular}
+    \caption{Selected components}
+    \label{tab:components_selected}
+\end{table}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{UV light and soil moisture sensing}
-A capacitive soil moisture sensor will be used as they do not rust like resistive sensors would. Both the soil moisture sensor and UV light sensor can be connected to a microcontroller without any additional circuits. The soil moisture sensor outputs a measurement equivalent voltage, while the UV light sensor communicates using I2C.
+\subsection{Microcontroller}
+Data will be sent from the microcontroller to the app using a web server. This requires the microcontroller to be connected to a WiFi network. A Bluetooth connection will be used to initially connect the microcontroller to a WiFi network.
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Automatic watering}
-The pump will be controlled by the microcontroller and powered by the battery. A drive circuit needs to be added to ensure the pump receives the correct voltage and current. A peristaltic pump will need to be used to prevent siphoning. Siphoning can also be prevented by using valves along with a small centrifugal pump. A peristaltic pump will be used to keep the final device as compact as possible. 
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{App}
-The app will allow the user to view the UV light exposure, soil moisture levels and watering over time. The app will also allow the user to connect the microcontroller to WiFi and set the target soil moisture level. 
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Battery and charging}
-The battery will need to be able to power the system for at least two hours at a time. This is to ensure the system functions during loadshedding. The battery needs to be charged whenever power is available. A charging circuit will need to be designed.
+The selection of microcontrollers with a reasonable shipping time and cost are limited. The ESP32 C6 Dev Board was selected as it has both Bluetooth and WiFi capabilities.
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{PCB}
+\subsection{UV light and soil moisture sensing}
+A capacitive soil moisture sensor will be used as they do not rust like resistive sensors do when exposed to moisture for extended time periods. This will allow the sensor to be left in the soil permanently. Both the soil moisture sensor and UV light sensor can be connected to a microcontroller without any additional circuits and output a measurement equivalent voltage. 
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Automatic watering}
+The pump will be powered by the battery. A drive circuit needs to allow the pump to be controlled using the microcontroller. A peristaltic pump will be used to prevent siphoning. \\
+
+Siphoning could also be prevented by using valves along with a small centrifugal pump, potentially resulting in a lower cost. A peristaltic pump will, however lead to a more compact system as it does not need to be submerged and can be contained within the same casing as the rest of the system.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{App}
+The app will allow the user to view the UV light exposure, soil moisture levels and watering over times. The app will also allow the user to connect the microcontroller to WiFi initially and change the target soil moisture level. 
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Battery and charging}
+The battery will need to be able to power the system for at least two hours at a time to ensure the system functions during loadshedding. The battery needs to be charged whenever power is available. A charging circuit will need to be designed to achieve this.
+\\
+
+Two commonly available battery types were considered: Lithium-ion and lead-acid. The following factors were compared in table \ref{tab:battery_comp}: 
+
+\begin{itemize}
+    \item \textbf{Cost:} The initial cost of the battery
+    \item \textbf{Depth of discharge:} Maximum percentage of a fully charged battery that can be used before recharging
+    \item \textbf{Cycle life:} The amount of charge/discharge cycles the battery can undergo without performance being affected
+    \item \textbf{Power delivery:} The amount of power delivered in a charge cycle
+    \item \textbf{Size:} Physical size of the battery
+\end{itemize}
+
+\begin{table}[!h]
+    \centering
+    \begin{tabular}{|c||c|c|}
+        \hline
+         &  Lead-acid & Lithium-ion \\
+        \hline
+        Cost & Costs less & Costs more \\
+        Depth of discharge \cite{battery_10_diff} & 50\% & 80\% \\
+        Cycle life \cite{battery_10_diff} & 300 - 500 cycles & 5000 cycles \\
+        Power delivery \cite{battery_guide} & Starts strong but dissipates & Constant \\
+        Size \cite{battery_10_diff} & Larger & Smaller \\
+        \hline
+    \end{tabular}
+    \caption{Lithium-ion and lead-acid battery comparison}
+    \label{tab:battery_comp}
+\end{table}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{PCB}
 To keep the final system as compact as possible, a PCB will be designed for the circuits.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Case}
+\subsection{Case}
 The final system will be contained in a compact, durable case.
