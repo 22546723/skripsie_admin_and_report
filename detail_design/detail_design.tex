@@ -1,0 +1,61 @@
+\graphicspath{{detail_design/fig/}}
+
+\chapter{Detailed Design}
+\label{chap:detail_design}
+
+According to the electrical characteristics of the major components (shown in table \ref{tab:electrical_chars}), the entire system can be powered by a 5V source. 
+
+\begin{table}[!h]
+\centering
+\caption{Electrical characteristics of major components.}
+\label{tab:electrical_chars}
+    \begin{tabular}{|c||c|c||c|c|} 
+        \hline
+        Component & \multicolumn{2}{c||}{Input} & \multicolumn{2}{c|}{Output} \\
+       %\hline
+         & Voltage [V] & Current [mA] & Voltage [V] & Current [mA] \\
+        \hline
+        \hline
+        ESP32 \cite{esp_datasheet} & 3.3 & 500 & & \\
+         & 5 & & & \\
+        \hline
+        ESP32 pins \cite{esp_datasheet} & 0.75 * $V_{DD}$ & & 0.8 * $V_{DD}$ & 40\\
+        & $V_{DD}$ + 0.3 & & & \\
+        \hline
+        Soil moisture sensor \cite{Moisture_sensor_datasheet} & 3.3 & $\pm$ 5 \tablefootnote{Based off characteristics of similar sensors} \cite{Moisture_sensor_current} & 1.2 & \\
+        & 5.5 & & 2.5 & \\
+        \hline
+        UV light sensor \cite{UV_sensor_datasheet} & 3 & 100 \tablefootnote{Maximum rating} & & \\
+        & 5 & & & \\
+        \hline
+        Pump \cite{pump_datasheet} & 5 & 500 & & \\
+        & 6 & & & \\
+        \hline
+    \end{tabular}
+\end{table}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{UV light exposure and soil moisture level measurement and logging}
+Due to the current requirement of the UV light sensor it will need to be powered from the main power source as the microcontroller pins cannot supply enough current to meet the maximum rating. 
+\\
+Power will therefore be supplied to components using 5V and 3.3V voltage regulators as described in section \ref{sec:battery}. To prevent exceeding the maximum current of the regulators, the sensors are connected to the 3.3V supply and the microcontroller to the 5V supply. 
+\\
+
+The UV light sensor is connected to the microcontroller using I2C, and the soil moisture sensor is connected to an analogue input pin.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Automatic watering}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{App}
+\subsection{Wifi vs bluetooth for data transfer}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Battery and charging}
+\label{sec:battery}
+\subsection{battery options}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{PCB}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Case}
