@@ -30,7 +30,7 @@ The microcontroller uses a 5V supply to maximize the voltage output of the pins 
         UV light sensor \cite{UV_sensor_datasheet} & 3 & 100 \tablefootnote{Maximum rating based off characteristics of similar sensors} & 0 & \\
         & 5 & & 3 & \\
         \hline
-        Pump \cite{pump_datasheet} & 6 &  & & \\
+        Pump \cite{pump_datasheet} & 6 & 1800 (2500 peak) \cite{pump_datasheet_similar} \tablefootnote{Based off characteristics of similar pump} & & \\
         \hline
     \end{tabular}
 \end{table}
@@ -42,7 +42,14 @@ Power will therefore be supplied to components using 5V and 3.3V voltage regulat
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Automatic watering}
+The pump requires 6V and has a peak current of approximately 2.5A and a rated power of 5W (based on the rating of a similar pump). To accommodate the maximum potential power draw of 15W, a TIP31C npn power transistor will be used alongside a 2N2222A npn transistor in a Darlington pair. 
+\\
+The TIP31C has a maximum rated collector current of 3A and can dissipate up to 40W. The operating current of the pump at 5W, 6V is 0.8A. At \(I_C = 0.8A\), the TIP31C has a turn on voltage \(V_{BE\_on}\) of approximately 0.9V and a DC current gain \(\beta\) of 43. The emitter current of the 2N2222A transistor can be calculated using \(I_C\) and \(\beta\) of the TIP31C: 
+\[I_{E(2N2222A)} = I_{B(TIP31C)} = \frac{I_{C(TIP31C)}}{\beta_{TIP31C}} = \frac{0.8}{43} = 18.60mA\]
+The 2N2222A will therefore have a turn on voltage \(V_{BE\_on}\) of 0.7V and a DC current gain \(\beta\) of 225. 
+\\
 
+Due to the turn on voltages, the pump control circuit requires a control voltage of 7.6V to deliver 6V to the pump. 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{App}
 \subsection{Wifi vs bluetooth for data transfer}
