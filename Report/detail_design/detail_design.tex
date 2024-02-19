@@ -3,9 +3,9 @@
 \chapter{Detailed Design}
 \label{chap:detail_design}
 
-According to the electrical characteristics of the major components (shown in table \ref{tab:electrical_chars}), the entire system can be powered by a 6V source. Voltage regulators will be used to provide 5V to the microcontroller and 3.3V to the sensors. 
+According to the electrical characteristics of the major components (shown in table \ref{tab:electrical_chars}), the entire system can be powered by a 6V source. A voltage regulator will be used to provide 5V to the microcontroller.
 \\
-The microcontroller uses a 5V supply to maximize the voltage output of the pins (this will make designing the pump driver circuit easier - the driver circuit is going to need like 7+ volts)
+
 
 \begin{table}[!h]
 \centering
@@ -36,9 +36,15 @@ The microcontroller uses a 5V supply to maximize the voltage output of the pins 
 \end{table}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{UV light exposure and soil moisture level measurement and logging}
-Due to the current requirement of the UV light sensor it will need to be powered from the main power source as the microcontroller pins cannot supply enough current to meet the maximum rating. 
+
+The microcontroller uses a 5V supply to maximize the voltage output of the pins (this will make designing the pump driver circuit easier - the driver circuit is going to need like 7+ volts)
 \\
-Power will therefore be supplied to components using 5V and 3.3V voltage regulators as described in section \ref{sec:battery}. To prevent exceeding the maximum current of the regulators, the sensors are connected to the 3.3V supply and the microcontroller to the 5V supply. 
+
+
+Both the soil moisture and UV light sensors are designed to be powered by a microcontroller. Both sensors will therefore be powered using the 3.3V output pin on the ESP32. 
+\\
+
+TODO: select pins for the sensor outputs
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Automatic watering}
@@ -52,7 +58,21 @@ The 2N2222A will therefore have a turn on voltage \(V_{BE\_on}\) of 0.7V and a D
 Due to the turn on voltages, the pump control circuit requires a control voltage of 7.6V to deliver 6V to the pump. 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{App}
-\subsection{Wifi vs bluetooth for data transfer}
+
+\begin{figure}[!h]
+    \centering
+    \includegraphics[width= \textwidth]{Report/detail_design/fig/app_flow.png}
+    \caption{App flow}
+    \label{fig:app_flow}
+\end{figure}
+
+\subsection{Connecting to WiFi}
+\begin{figure}[!h]
+    \centering
+    \includegraphics[width= \textwidth]{Report/detail_design/fig/wifi_connect.png}
+    \caption{WiFi setup process}
+    \label{fig:wifi_setup}
+\end{figure}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Battery and charging}
