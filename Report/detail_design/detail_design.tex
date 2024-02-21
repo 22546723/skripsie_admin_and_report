@@ -24,8 +24,8 @@ According to the electrical characteristics of the major components (shown in ta
         ESP32 pins \cite{esp_datasheet} & 0.75 * $V_{DD}$ & & 0.8 * $V_{DD}$ & 40\\
         & $V_{DD}$ + 0.3 & & & \\
         \hline
-        Soil moisture sensor \cite{Moisture_sensor_datasheet} & 3.3 & $\pm$ 5 \tablefootnote{Based off characteristics of similar sensors} \cite{Moisture_sensor_current} & 1.2 & \\
-        & 5.5 & & 2.5 & \\
+        Soil moisture sensor \cite{Moisture_sensor_datasheet} & 3.3 & $< 5$ \tablefootnote{Based off measurements} & 1.2 (high moisture) & \\
+        & 5.5 & & 2.5 (low moisture) & \\
         \hline
         UV light sensor \cite{UV_sensor_datasheet} & 3 & 100 \tablefootnote{Maximum rating based off characteristics of similar sensors} & 0 & \\
         & 5 & & 3 & \\
@@ -43,8 +43,41 @@ The microcontroller uses a 5V supply to maximize the voltage output of the pins 
 
 Both the soil moisture and UV light sensors are designed to be powered by a microcontroller. Both sensors will therefore be powered using the 3.3V output pin on the ESP32. 
 \\
+Pins 2 and 3 (corresponding with ADC channels 2 and 3) will be used for the soil moisture and UV light sensor respectively
 
-TODO: select pins for the sensor outputs
+The default ADC measurement range of the ESP32-C6 is 0V to 1V \cite{esp_datasheet} \cite{esp_github}. The signals from the sensors must therefore be attenuated before being input to the ADC. The minimum attenuation as calculated in equation \ref{eqn:attenuation} \cite{attenuation_formula} is \(-10.37 dB\).
+
+\begin{equation}
+\label{eqn:attenuation}
+\begin{split}
+    Attenuation  (dB) & = 20 \cdot log_{10}\left ( \frac{V_{out}}{V_{in}} \right ) \\ 
+    & = 20 \cdot log_{10}\left ( \frac{1}{3.3} \right ) \\ 
+    & = -10.37 dB
+\end{split}
+\end{equation}
+
+An attenuation of 11dB was used as it is the closest value provided by the ESP32 Arduino Core library \cite{esp_arduino_github} (which allows writing code for the ESP32-C6 using the Arduino IDE). 
+\\
+The ESP32-C6 has a 12 bit ADC \cite{esp_tech_ref}, resulting in a resolution of 4095, the sensor output ranges can be calculated using equation \ref{eqn:measured_val}. Table \ref{tab:sensor_ranges} shows the calculated measurement ranges of both sensors.
+
+\begin{equation}
+\label{eqn:measured_val}
+    Measured \quad value = Resolution \cdot V_{in} \cdot 10^{Attenuation / 20}
+\end{equation}
+
+\begin{table}[!h]
+    \centering
+    \begin{tabular}{|c|cc|cc|}
+    \hline
+         & \multicolumn{2}{c||}{Soil moisture sensor} & \multicolumn{2}{c|}{UV light sensor} \\
+        \hline
+        Voltage & 1.2V & 2.5V & 0V & 3V \\
+        Measured value & 1385 & 2885 & 0 & 3462\\
+        \hline
+    \end{tabular}
+    \caption{Sensor value ranges}
+    \label{tab:sensor_ranges}
+\end{table}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Automatic watering}
