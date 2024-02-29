@@ -4,7 +4,47 @@
 \label{chap:testing}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{UV \& moisture measurement and logging}
+\section{UV light exposure and soil moisture level measurement and
+logging}
+
+%%%%%%%%%%%
+\subsection{Testing procedure}
+The logging of the sensor data will be tested by placing the sensors in controlled environments to verify the readings. The sensors and microcontroller will also be placed in a planter for 24 hours to assess the data logging capability of the system.
+
+%%%%%%%%%%%
+\subsection{Results}
+TO DO: fill in testing results \\
+Process 24h data and make graph?
+
+\begin{table}[!h]
+    \centering
+    \begin{tabular}{|c|c|c|}
+        \hline
+        Condition & Expected value & Measured value \\
+        \hline
+        Full sunlight & 100 & \\
+        Partial sunlight & 20-70 & \\
+        No sunlight & 0 & \\
+        \hline
+    \end{tabular}
+    \caption{UV light sensor testing results}
+    \label{tab:uv_results}
+\end{table}
+
+\begin{table}[!h]
+    \centering
+    \begin{tabular}{|c|c|c|}
+        \hline
+        Condition & Expected value & Measured value \\
+        \hline
+        Submerged in water & 100 & \\
+        Wrapped in damp cloth & 30-80 & \\
+        Dry & 0 & \\
+        \hline
+    \end{tabular}
+    \caption{Soil moisture sensor testing results}
+    \label{tab:soil_results}
+\end{table}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Automatic watering}

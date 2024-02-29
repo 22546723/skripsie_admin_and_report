@@ -23,9 +23,14 @@ The system must be able to reliably and accurately monitor soil moisture levels 
 The system must be able to reliably maintain soil moisture levels by providing water automatically. The user must be able to adjust the desired soil moisture level.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{UV light exposure and soil moisture level
+measurement and logging}
+The system must be able to log the average soil moisture and UV light exposure levels every minute. This data must be uploaded to be viewed on the app every 30 minutes.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{System design and component selection}
 
-Data from a soil moisture and UV light sensor will be monitored using a microcontroller. When soil moisture levels fall below a set value, a pump will turn on to water the plant until the soil reaches the target moisture level. The soil moisture, UV light exposure and watering times will be logged by the microcontroller and sent to an app. The user can use the app to view the data and set the moisture level target. The system will be powered by a battery that charges when power is available.
+Data from a soil moisture and UV light sensor will be monitored using a microcontroller. When soil moisture levels fall below a set value, a pump will turn on to water the plant until the soil reaches the target moisture level. The soil moisture, UV light exposure and watering times will be logged by the microcontroller and sent to a server. The user can use the app to view the data and set the moisture level target. The system will be powered by a battery that charges when power is available.
 
 \begin{table}[!h]
     \centering
@@ -36,8 +41,10 @@ Data from a soil moisture and UV light sensor will be monitored using a microcon
         Microcontroller &  ESP32 C6 Dev Board & R 285.20 & \href{https://www.robotics.org.za/ESP32-C6-DEV}{link} \\
         UV light sensor & Wave UV Sensor Module - GUVA-S12D & R 112.70 & \href{https://www.robotics.org.za/W9537}{link} \\
         Soil moisture sensor & Capacitive Soil Moisture Sensor V1.2 & R 55.20 & \href{https://www.robotics.org.za/CAP-SW-12}{link} \\
-        Pump & 6V Peristaltic Pump & R 229.95 & \href{https://www.diyelectronics.co.za/store/motors/4627-6v-peristaltic-pump-100mlmin.html}{link} \\
-        Battery & & R & \\
+        Pump & Digital Peristaltic Pump & R 879.95 & \href{https://www.diyelectronics.co.za/store/dfrobot/2119-digital-peristaltic-pump.html?search_query=PERISTALTIC+PUMP&results=4}{link} \\
+        Battery & Li-polymer Battery HAT - 5V output & R 399.95 & \href{https://www.diyelectronics.co.za/store/hats/2726-lipo-battery-hat-5v-output.html?search_query=Li-polymer+Battery+HAT&results=14}{link}\\
+        \hline
+        Total & & R 1 733.00 & \\
         \hline
     \end{tabular}
     \caption{Selected components}
@@ -53,13 +60,15 @@ The selection of microcontrollers with a reasonable shipping time and cost are l
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{UV light and soil moisture sensing}
-A capacitive soil moisture sensor will be used as they do not rust like resistive sensors do when exposed to moisture for extended time periods. This will allow the sensor to be left in the soil permanently. Both the soil moisture sensor and UV light sensor can be connected to a microcontroller without any additional circuits and output a measurement equivalent voltage. 
+A capacitive soil moisture sensor will be used as they do not rust like resistive sensors do when exposed to moisture for extended time periods. This will allow the sensor to be left in the soil permanently. Both the soil moisture sensor and UV light sensor can be connected to a microcontroller without any additional circuits and output a measurement equivalent analog voltage. 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Automatic watering}
 The pump will be powered by the battery. A driver circuit allows the pump to be controlled using the microcontroller. A peristaltic pump will be used to prevent siphoning. \\
 
-Siphoning could also be prevented by using valves along with a small centrifugal pump, potentially resulting in a lower cost. A peristaltic pump will, however lead to a more compact system as it does not need to be submerged and can be contained within the same casing as the rest of the system.
+Siphoning could also be prevented by using valves along with a small centrifugal pump, potentially resulting in a lower cost. A peristaltic pump will, however lead to a more compact system as it does not need to be submerged and can be contained within the same casing as the rest of the system. \\
+
+The digital peristaltic pump was selected as it includes a drive circuit that takes a PWM voltage as input and requires only 5W at 5V to function.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{App}
@@ -67,7 +76,7 @@ The app will allow the user to view the UV light exposure, soil moisture levels 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Battery and charging}
-The battery will need to be able to power the system for at least two hours at a time to ensure the system functions during loadshedding. The battery needs to be charged whenever power is available. A charging circuit will need to be designed to achieve this.
+The battery will need to be able to power the system for at least two hours at a time to ensure the system functions during loadshedding. The battery needs to be charged whenever power is available. 
 \\
 
 Two commonly available battery types were considered: Lithium-ion and lead-acid. The following factors were compared in table \ref{tab:battery_comp}: 
@@ -96,6 +105,8 @@ Two commonly available battery types were considered: Lithium-ion and lead-acid.
     \caption{Lithium-ion and lead-acid battery comparison}
     \label{tab:battery_comp}
 \end{table}
+
+The Li-Polymer battery HAT was chosen as it provides a 5V, 1.8A output \cite{battery_faq} and manages the charging of the included battery. The battery has a 3000mAh capacity and will be able to provide power to the system throughout loadshedding provided that the pump is not running constantly.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{PCB}
