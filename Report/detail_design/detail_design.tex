@@ -41,10 +41,34 @@ According to the electrical characteristics of the major components (shown in ta
         \hline
     \end{tabular}
 \end{table}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Microcontroller}
+Code for the microcontroller was written using the Arduino IDE, this was made possible by the esp32 (version 3.0.0-alpha3) board manager by Esspressif Systems and other contributors \cite{esp_arduino_github}. Data is stored using Firebase real-time and Firestore databases. Firebase was selected as it requires no additional device to act as a broker and allows the databases to be accessed remotely. It is also easily incorporated into Android apps using Android SDK. The Firebase Arduino client library for for Arduino devices by GitHub user mobizt (Suwatchai K.) and other contributors \cite{firebase_github} is used to interact with the databases.
+\\
+
+Three classes are used to manage external connections (Bluetooth and WiFi), data logging and uploading data. 
+\begin{itemize}
+    \item \textbf{DataLogger:} Calculates the average sensor readings.
+    \item \textbf{ConnectionManager:} Manages the WiFi and Bluetooth connections.
+    \item \textbf{DataManager:} Manages the connection to the Firebase databases, uploads logged data and retrieves device settings.
+\end{itemize}
+
+\begin{figure}[!h]
+    \centering
+    \includegraphics[width= 0.9\textwidth]{Report/detail_design/fig/main_loop_flow.png}
+    \caption{Microcontroller code: main loop}
+    \label{fig:main_loop_flow}
+\end{figure}
+
+The total sensor readings are updated in the main loop using a timer and interrupt that is triggered every minute. The current readings are also uploaded to the real-time database. Every 30 minutes the average sensor readings are calculated and uploaded to the Firestore database along with a timestamp.
+\\
+The current soil moisture levels are continuously compared to the target moisture level. The pump is turned on when the reading falls below $90\%$ of the target and is turned off once it reaches $110\%$ of the target level. Figure \ref{fig:main_loop_flow} shows a summary of the code described.
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{UV light exposure and soil moisture level measurement and logging}
 
-The microcontroller uses a 5V supply to maximize the voltage output of the pins (this will make designing the pump driver circuit easier - the driver circuit is going to need like 7+ volts)
+The microcontroller uses a 5V supply to maximize the voltage output of the pins.
 \\
 
 
