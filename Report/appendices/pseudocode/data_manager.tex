@@ -1,0 +1,81 @@
+\begin{algorithm}
+    \caption{DataManager class}
+    \label{alg:data_manager}
+
+    \algloopdefx{Return}[1]{\textbf{return} #1}
+
+    \begin{algorithmic}[1]
+
+        \Function{connectToFirebase}{ }
+        \label{line:dm_firebase_connect}
+            \State $config.api\_key \gets API\_KEY$
+            \State $config.database\_url \gets FIREBASE\_URL$
+            \State
+
+            \If{\Call{Firebase.signUp}{$config$} is successful}
+                \State \Call{Firebase.begin}{$config$}
+                \State
+
+                \If{\Call{Firebase.ready}{ }}
+                    \Return{1}
+                \Else 
+                    \Return{0}
+                \EndIf 
+            \Else
+                \Return{2}
+            \EndIf
+        \EndFunction
+        \Statex
+
+
+        \Function{checkForUpdates}{ }
+        \label{line:dm_update_check}
+
+            % \State $update \gets false$
+            \State $update \gets$ \Call{Firebase.RTDB.get}{"/status/update"}
+            \State
+
+            \If{$update$}
+            \Comment{Update preferences}
+                \State $soilTarget \gets$ \Call{Firebase.RTDB.get}{"/status/target"}
+                \State $name \gets$ \Call{Firebase.RTDB.get}{"/status/name"}
+                \State preferences $\gets soilTarget,$ $name$
+                \State \Call{Firebase.RTDB.set}{"/status/update", false}
+            \EndIf
+            \State
+                
+            \Return{$update$} 
+        \EndFunction
+        \Statex
+
+
+        \Function{uploadData}{$soilData$, $uvData$, $timestamp$}
+        \label{line:dm_upload_data}
+
+            \State $recNo \gets$ read from preferences
+            \State $docPath \gets$ "data/rec" + $recNo$
+            \State
+            
+            \State $record \gets$ new FirebaseJson
+            \Comment{Setup record}
+            \State $record \gets$ add $soilData$
+            \State $record \gets$ add $uvData$
+            \State $record \gets$ add $timestamp$
+            \State
+
+            \If{\Call{Firebase.Firestore.createDocument}{$docPath$, $record$} is successful}
+                \State $recNo \gets recNo + 1$
+                \State preferences $\gets recNo$
+            \EndIf
+        \EndFunction
+        \Statex
+
+
+        \Function{uploadLiveData}{$soilData$, $uvData$}
+        \label{line:dm_upload_live}
+            \State \Call{Firebase.RTDB.set}{$soilData$}
+            \State \Call{Firebase.RTDB.set}{$uvData$}
+        \EndFunction
+        
+    \end{algorithmic}
+\end{algorithm}

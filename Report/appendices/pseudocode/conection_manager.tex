@@ -1,0 +1,125 @@
+
+\begin{algorithm}
+    \caption{ConnectionManager class - part 1}
+    \label{alg:connection_manager}
+
+    \algloopdefx{Return}[1]{\textbf{return} #1}
+
+    \begin{algorithmic}[1]
+        \Function{setupBluetooth}{$boardName$}
+        \label{line:cm_setup_bt}
+
+            \State \Call{BLE init}{$boardName$}
+            \State $pServer \gets$ \Call{BLE createServer}{ }
+            \State
+            
+            \State $pServer \gets$ \Call{create service}{$serviceConnect$}
+            \State $serviceConnect \gets$ \Call{add characteristics}{$deviceName$}
+            \State
+
+            \State $pServer \gets$ \Call{create service}{$serviceScan$}
+            \State $serviceScan \gets$ \Call{add characteristics}{$scan$, $scanName$, $scanNew$}
+            \State
+
+            \State $pServer \gets$ \Call{create service}{$serviceSelect$}
+            \State $serviceSelect \gets$ \Call{add characteristics}{$wifiSet$, $wifiName$, $wifiPassword$, $wifiConnected$}
+            \State
+
+            \State $deviceName \gets boardName$
+            \State $scanNew \gets false$
+            \State $scan \gets false$
+            \State $wifiSet \gets false$
+
+            \State \Call{start BLE}{$pServer$}
+
+        \EndFunction
+        \Statex
+
+
+        \Function{sendWifiNetworks}{ }
+        \label{line:cm_send_wifi}
+            \State $scan \gets$ read $scan$ characteristic 
+            \State
+    
+            \If{$scan$ is true}
+                \State $numNetworks \gets$ \Call{WiFi.scanNetworks}{ }
+                \State $sendCount \gets 0$
+
+                \While{$sendCount < numNetworks $}
+                    \State $scanNew \gets$ read $scanNew$ characteristic 
+                    \State
+                    
+                    \State
+                    \Comment{$scanNew$ set to false by app after reading name}
+                    \If{$scanNew$ is false}
+                        \State $scanName$ characteristic $\gets$ \Call{WiFi.SSID}{$sendCount$}
+                        \State $scanNew$ characteristic $\gets true$
+                        \State $sendCount \gets sendCount + 1$
+                    \EndIf
+                \EndWhile
+                \State
+                \State $scan$ characteristic $\gets false$
+    
+            \EndIf
+        \EndFunction
+
+        \algstore{cmBreak}
+    \end{algorithmic}
+\end{algorithm}
+
+\begin{algorithm}
+    \caption{ConnectionManager class - part 2}
+    \label{alg:connection_manager_2}
+    \algloopdefx{Return}[1]{\textbf{return} #1}
+
+    \begin{algorithmic}[1]
+
+        \Function{connectToWifi}{ }
+        \label{line:cm_wifi_connect}
+            \State $ssid,$ $password \gets$ read from preferences
+
+            \If{$ssid$ or $password$ is empty}
+                \Return{0}
+                \Comment{No credentials}
+            \Else
+                \State \Call{WiFi.begin}{$ssid, password$}
+                \State Start 5 sec timeout coundown
+
+                \If{\Call{WiFi.status}{ } is connected}
+                    \Return{1}
+                    \Comment{Connected}
+                \Else
+                    \Return{2}
+                    \Comment{Timeout}
+                \EndIf
+            \EndIf
+        \EndFunction
+        \Statex
+
+        \Function{setupWifi}{ }
+        \label{line:cm_setup_wifi}
+            \State $set \gets$ read $wifiSet$ characteristic 
+            \State
+    
+            \If{$set$ is true}
+                \State $ssid \gets$ read $wifiName$ characteristic 
+                \State $password \gets$ read $wifiPassword$ characteristic 
+
+                \State preferences $\gets ssid, password$
+                \State
+
+                \State $connected \gets$ \Call{connectToWifi}{ }
+                \State $wifiConnected$ characteristic $\gets connected$
+                \State $wifiSet$ characteristic $\gets false$         
+                \State
+
+                \If{$connected$ is 1}
+                    \Return{true}
+                \EndIf
+            \EndIf
+            \State
+            \Return{false}
+        \EndFunction
+        
+    \end{algorithmic}
+\end{algorithm}

@@ -1,0 +1,43 @@
+Test line ref \ref{line:dl_init}, \ref{line:dl_log}
+
+\begin{algorithm}
+    \caption{DataLogger class}
+    \label{alg:data_logger}
+
+    \algloopdefx{Return}[1]{\textbf{return} #1}
+
+    \begin{algorithmic}[1]
+        \Function{DataLogger}{$maxLog$}
+        \label{line:dl_init}
+        \Comment{Initialise class}
+            \State $maxLogs \gets maxLog$
+            \State $dataTotal \gets [0, 0]$
+            \State $logCount \gets 0$
+        \EndFunction
+        \Statex
+        % \Statex
+        
+    
+        \Function{logData}{$data1, data2$}
+        \label{line:dl_log}
+            \State $dataTotal \gets dataTotal + [data1, data2]$
+            \Comment{Update totals}
+            \State $dataOut \gets dataTotal/logCount$
+            \Comment{Get avgs}
+            \State $maxLogsFlag \gets$ false
+            \State
+
+            \If{$logCount >= maxLogs$}
+            \Comment{Max logs reached}
+                \State $logCount \gets 0$
+                \State $dataTotal \gets [0, 0]$
+                \State $maxLogsFlag \gets$ true
+            \Else
+                \State $logCount \gets logCount + 1$
+            \EndIf
+            \State
+
+            \Return{$maxLogsFlag$, $dataOut$}
+        \EndFunction
+    \end{algorithmic}
+\end{algorithm}

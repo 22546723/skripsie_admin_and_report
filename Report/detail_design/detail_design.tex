@@ -10,7 +10,7 @@
     \label{fig:detail_schematic}
 \end{figure}
 
-According to the electrical characteristics of the major components (shown in table \ref{tab:electrical_chars}), the entire system can be powered by a 5V source. The battery module will provide power to the pump and microcontroller. The sensors will be powered from the microcontroller 3.3V output. Pin 23 on the ESP32 is used to control the pump using a PWM signal, pins 2 and 3 receive the analog outputs from the soil moisture sensor and UV light sensor respectively. As shown in table \ref{tab:electrical_chars} the system will not exceed the battery module current capacity of 1.8A.
+According to the electrical characteristics of the major components (shown in table \ref{tab:electrical_chars}), the entire system can be powered by a 5V source. The battery module will provide power to the pump and microcontroller. The sensors will be powered from the microcontroller 3.3V output. Pin 23 on the ESP32 is used to control the pump using a \ac{PWM} signal, pins 2 and 3 receive the analog outputs from the soil moisture sensor and \ac{UV} light sensor respectively. As shown in table \ref{tab:electrical_chars} the system will not exceed the battery module current capacity of 1.8A.
 
 \begin{table}[!h]
 \centering
@@ -48,7 +48,7 @@ According to the electrical characteristics of the major components (shown in ta
 Code for the microcontroller was written using the Arduino IDE, this was made possible by the esp32 (version 3.0.0-alpha3) board manager by Esspressif Systems and other contributors \cite{esp_arduino_github}. Data is stored using Firebase real-time and Firestore databases. Firebase was selected as it requires no additional device to act as a broker and allows the databases to be accessed remotely. It is also easily incorporated into Android apps using Android SDK. The Firebase Arduino client library for for Arduino devices by GitHub user mobizt (Suwatchai K.) and other contributors \cite{firebase_github} is used to interact with the databases.
 \\
 
-Three classes are used to manage external connections (Bluetooth and WiFi), data logging and uploading data. 
+Three classes are used to manage external connections (Bluetooth and WiFi), data logging and uploading data. Appendix \ref{appen:pseudocode} contains the pseudo-code for each class.
 \begin{itemize}
     \item \textbf{DataLogger:} Calculates the average sensor readings.
     \item \textbf{ConnectionManager:} Manages the WiFi and Bluetooth connections.
@@ -57,14 +57,14 @@ Three classes are used to manage external connections (Bluetooth and WiFi), data
 
 \begin{figure}[!h]
     \centering
-    \includegraphics[width= 0.9\textwidth]{Report/detail_design/fig/main_loop_flow.png}
+    \includegraphics[width= \textwidth]{Report/detail_design/fig/main_loop_flow.png}
     \caption{Microcontroller code: main loop}
     \label{fig:main_loop_flow}
 \end{figure}
 
 The total sensor readings are updated in the main loop using a timer and interrupt that is triggered every minute. The current readings are also uploaded to the real-time database. Every 30 minutes the average sensor readings are calculated and uploaded to the Firestore database along with a timestamp.
 \\
-The current soil moisture levels are continuously compared to the target moisture level. The pump is turned on when the reading falls below $90\%$ of the target and is turned off once it reaches $110\%$ of the target level. Figure \ref{fig:main_loop_flow} shows a summary of the code described.
+The current soil moisture levels are continuously compared to the target moisture level. The pump is turned on when the reading falls below $90\%$ of the target and is turned off once it reaches $110\%$ of the target level. Figure \ref{fig:main_loop_flow} shows a summary of the code described. 
 
 \begin{table}[!h]
     \centering
@@ -81,8 +81,12 @@ The current soil moisture levels are continuously compared to the target moistur
     \label{tab:pin_assignment}
 \end{table}
 
+%%%%%%%%
+\subsection{Bluetooth low energy}
+The microcontroller is set up as a Bluetooth low energy 
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{UV light exposure and soil moisture level measurement and logging}
+\section{\Ac{UV} light exposure and soil moisture level measurement and logging}
 
 The microcontroller uses a 5V supply to maximize the voltage output of the pins.
 \\
@@ -90,9 +94,9 @@ The microcontroller uses a 5V supply to maximize the voltage output of the pins.
 
 Both the soil moisture and UV light sensors are designed to be powered by a microcontroller. Both sensors will therefore be powered using the 3.3V output pin on the ESP32. 
 \\
-Pins 2 and 3 (corresponding with ADC channels 2 and 3) will be used for the soil moisture and UV light sensor respectively
+Pins 2 and 3 (corresponding with \ac{ADC} channels 2 and 3) will be used for the soil moisture and UV light sensor respectively
 
-The default ADC measurement range of the ESP32-C6 is 0V to 1V \cite{esp_datasheet} \cite{esp_github}. The signals from the sensors must therefore be attenuated before being input to the ADC. The minimum attenuation as calculated in equation \ref{eqn:attenuation} \cite{attenuation_formula} is \(-10.37 dB\).
+The default \ac{ADC} measurement range of the ESP32-C6 is 0V to 1V \cite{esp_datasheet} \cite{esp_github}. The signals from the sensors must therefore be attenuated before being input to the \ac{ADC}. The minimum attenuation as calculated in equation \ref{eqn:attenuation} \cite{attenuation_formula} is \(-10.37 dB\).
 
 \begin{equation}
 \label{eqn:attenuation}
@@ -105,7 +109,7 @@ The default ADC measurement range of the ESP32-C6 is 0V to 1V \cite{esp_datashee
 
 An attenuation of 11dB was used as it is the closest value provided by the ESP32 Arduino Core library \cite{esp_arduino_github} (which allows writing code for the ESP32-C6 using the Arduino IDE). 
 \\
-The ESP32-C6 has a 12 bit ADC \cite{esp_tech_ref}, resulting in a resolution of 4095, the sensor output ranges can be calculated using equation \ref{eqn:measured_val}. Table \ref{tab:sensor_ranges} shows the calculated measurement ranges of both sensors.
+The ESP32-C6 has a 12 bit \ac{ADC} \cite{esp_tech_ref}, resulting in a resolution of 4095, the sensor output ranges can be calculated using equation \ref{eqn:measured_val}. Table \ref{tab:sensor_ranges} shows the calculated measurement ranges of both sensors.
 
 \begin{equation}
 \label{eqn:measured_val}
@@ -139,7 +143,7 @@ The ESP32-C6 has a 12 bit ADC \cite{esp_tech_ref}, resulting in a resolution of 
     \label{fig:app_flow_detailed}
 \end{figure}
 
-BTLE details - describe how the esp and app send data over bluetooth
+BLE details - describe how the esp and app send data over bluetooth
 
 \subsection{Connecting to WiFi}
 \begin{figure}[!h]
